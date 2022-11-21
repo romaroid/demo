@@ -1,0 +1,47 @@
+get:
+  summary: Get the journals
+  operationId: getJournals
+  tags:
+    - Journals
+  produces:
+    - 'application/json'
+  parameters:
+    - name: query
+      in: query
+      description: Filter by matches in the journal title, ISSN or EISSN, maximum 150 chars
+      type: string
+      default: ""
+    - name: symbol
+      in: query
+      description: Filter by symbol [A-Z] | "0-9", "0-9 when journal-title starts from non alphabetic symbol
+      required: false
+      type: string
+      default: ""
+    - name: hasOnlyOpenAccess
+      in: query
+      description: Filter by only open access in a journal
+      required: false
+      default: false
+      type: boolean
+    - name: offset
+      in: query
+      description: A count of records skipped in a search result
+      required: false
+      default: 0
+      minimum: 0
+      type: integer
+    - name: size
+      in: query
+      description: A count of records in a response
+      required: false
+      default: 20
+      minimum: 0
+      maximum: 200
+      type: integer
+  responses:
+    200:
+      description: Journals search request
+      schema:
+        $ref: "../schemas/JournalsData.yaml"
+    default:
+      $ref: "../responses/UnexpectedError.yaml"

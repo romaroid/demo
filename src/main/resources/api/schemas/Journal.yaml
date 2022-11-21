@@ -1,0 +1,25 @@
+type: object
+
+required:
+  - country
+  - hasOpenAccess
+  - issn
+  - issuesPerYear
+  - publisher
+  - title
+
+properties:
+  title:
+    type: string
+  issn:
+    type: string
+  eissn:
+    type: string
+  publisher:
+    type: string
+  country:
+    type: string
+  issuesPerYear:
+    type: integer
+  hasOpenAccess:
+    type: boolean

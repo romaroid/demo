@@ -1,0 +1,20 @@
+get:
+  summary: Get journal volumes with issues by ISSN or EISSN
+  operationId: getVolumes
+  produces:
+    - 'application/json'
+  tags:
+    - Journals
+  parameters:
+    - name: serialNumber
+      in: path
+      description: Journal ISSN or EISSN
+      required: true
+      type: string
+  responses:
+    200:
+      description: Journal volumes response
+      schema:
+        $ref: "../schemas/Journal.yaml"
+    default:
+      $ref: "../responses/UnexpectedError.yaml"

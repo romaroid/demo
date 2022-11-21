@@ -1,0 +1,73 @@
+components:
+  schemas:
+    JournalsData:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: The total count of search result
+        sections:
+          type: array
+          description: The list of journal sections
+          items:
+            $ref: '#/components/schemas/JournalSection'
+    JournalVolumesData:
+      required:
+        - volumes
+      type: object
+      properties:
+        journal:
+          $ref: '#/components/schemas/Journal'
+        volumes:
+          type: array
+          description: Journal volumes
+          items:
+            $ref: '#/components/schemas/JournalVolume'
+    JournalSection:
+      type: object
+      properties:
+        symbol:
+          type: string
+        journals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Journal'
+    Journal:
+      required:
+        - country
+        - hasOpenAccess
+        - issn
+        - issuesPerYear
+        - publisher
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+        issn:
+          type: string
+        eissn:
+          type: string
+        publisher:
+          type: string
+        country:
+          type: string
+        issuesPerYear:
+          type: integer
+        hasOpenAccess:
+          type: boolean
+    JournalVolume:
+      required:
+        - issues
+        - number
+        - year
+      type: object
+      properties:
+        number:
+          type: string
+        year:
+          type: integer
+        issues:
+          type: array
+          items:
+            type: string

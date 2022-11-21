@@ -1,0 +1,60 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "org.openapi.generator" version "6.2.1"
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.session:spring-session-core'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+def openApiSource = "$rootDir/src/main/resources/api/petstore-v3.0.yaml"
+
+openApiValidate {
+	inputSpec = openApiSource.toString()
+	recommend = true
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = openApiSource.toString()
+	outputDir = "$buildDir/generated".toString()
+	apiPackage = "com.embase.api"
+	modelPackage = "com.embase.api.model"
+	configOptions = [
+			dateLibrary: "java8"
+			// TODO Discuss annotationLibrary & documentationProvider
+			// annotationLibrary: "none",
+			// documentationProvider: "none"
+	]
+}
+
+// Documentation
+task buildHtmlClient(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask){
+	generatorName = "dynamic-html"
+	inputSpec = openApiSource.toString()
+	outputDir = "$buildDir/html".toString()
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

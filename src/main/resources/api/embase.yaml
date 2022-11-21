@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: Embase UI API
+  description: List of endpoints exposed to frontend
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/rest/spring
+paths:
+  /journals:
+    get:
+      tags:
+        - Journals
+      summary: Get the journals
+      operationId: getJournals
+      parameters:
+        - name: query
+          in: query
+          description: Filter by matches in the journal title, ISSN or EISSN, maximum
+            150 chars
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          description: Filter by symbol [A-Z] | "0-9", "0-9 when journal-title starts
+            from non alphabetic symbol
+          schema:
+            type: string
+        - name: hasOnlyOpenAccess
+          in: query
+          description: Filter by only open access in a journal
+          schema:
+            type: boolean
+            default: false
+        - name: offset
+          in: query
+          description: A count of records skipped in a search result
+          schema:
+            minimum: 0
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: A count of records in a response
+          schema:
+            maximum: 200
+            minimum: 0
+            type: integer
+            default: 20
+      responses:
+        200:
+          description: Journals search request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalsData'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /journals/{serialNumber}:
+    get:
+      tags:
+        - Journals
+      summary: Get journal volumes with issues by ISSN or EISSN
+      operationId: getVolumes
+      parameters:
+        - name: serialNumber
+          in: path
+          description: Journal ISSN or EISSN
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Journal volumes response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalVolumesData'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  schemas:
+    JournalsData:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: The total count of search result
+        sections:
+          type: array
+          description: The list of journal sections
+          items:
+            $ref: './#/JournalSection'
+    JournalVolumesData:
+      required:
+        - volumes
+      type: object
+      properties:
+        journal:
+          $ref: './#/Journal'
+        volumes:
+          type: array
+          description: Journal volumes
+          items:
+            $ref: './#/JournalVolume'
+    JournalSection:
+      type: object
+      properties:
+        symbol:
+          type: string
+        journals:
+          type: array
+          items:
+            $ref: './#/Journal'
+    Journal:
+      required:
+        - country
+        - hasOpenAccess
+        - issn
+        - issuesPerYear
+        - publisher
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+        issn:
+          type: string
+        eissn:
+          type: string
+        publisher:
+          type: string
+        country:
+          type: string
+        issuesPerYear:
+          type: integer
+        hasOpenAccess:
+          type: boolean
+    JournalVolume:
+      required:
+        - issues
+        - number
+        - year
+      type: object
+      properties:
+        number:
+          type: string
+        year:
+          type: integer
+        issues:
+          type: array
+          items:
+            type: string
+    ApiError:
+      type: object
+      properties:
+        message:
+          type: string
